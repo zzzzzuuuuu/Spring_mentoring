@@ -1,10 +1,10 @@
 package com.example.mentoring.controller;
 
 import com.example.mentoring.entity.Board;
+import com.example.mentoring.response.Response;
 import com.example.mentoring.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -22,16 +22,18 @@ public class BoardController {
 
     // get 게시글 전체 조회 -> 대략적인 게시물 정보 확인
     // ex)localhost:8888/boards
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/boards")
-    public ResponseEntity<?> getBoards() {
-        return new ResponseEntity<>(boardService.getBoards(), HttpStatus.OK);
+    public Response getBoards() {
+        return Response.success(boardService.getBoards());
     }
 
     // get 게시글 단건 조회 -> 게시글 상세 조회
     // ex)localhost:8888/boards/3
+    @ResponseStatus(HttpStatus.OK) //상태코드는 컨트롤러에서 지정해주는 게 좋음.
     @GetMapping("/api/boards/{id}")
-    public ResponseEntity<?> getBoard(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(boardService.getBoard(id), HttpStatus.OK);
+    public Response getBoard(@PathVariable("id") Long id) {
+        return Response.success(boardService.getBoard(id));
     }
 
     // post 게시글 작성
@@ -39,25 +41,28 @@ public class BoardController {
     // localhost:8080/boards (only post)
     // @RequestBody 붙이는 이유: JSON 타입으로 데이터가 들어오는데, 이걸 자바에서 인식할 수 있게 자바 클래스로 매핑해줌.
     // Rest API-> JSON 형식으로 데이터를 받아야함.
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/boards")
-    public ResponseEntity<?> save(@RequestBody Board board) {
-        return new ResponseEntity<>(boardService.save(board), HttpStatus.CREATED);
+    public Response save(@RequestBody Board board) {
+        return Response.success(boardService.save(board));
     }
 
     // put 게시글 수정
     // localhost::8080/boards/3
     // 게시글 수정 -> 완료 버튼 -> 백엔드 서버 요청 (id, updateBoard)
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/api/boards/{id}")
-    public ResponseEntity<?> editBoard(@PathVariable("id") Long id, @RequestBody Board updateBoard) {
-        return new ResponseEntity<>(boardService.editBoard(id, updateBoard), HttpStatus.OK);
+    public Response editBoard(@PathVariable("id") Long id, @RequestBody Board updateBoard) {
+        return Response.success(boardService.editBoard(id, updateBoard));
     }
 
 
     // delete 게시글 삭제
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/boards/{id}")
-    public ResponseEntity<?> deleteBoard(@PathVariable Long id) {
+    public Response deleteBoard(@PathVariable Long id) {
         boardService.deleteBoard(id);
-        return new ResponseEntity<>("게시글 삭제 완료", HttpStatus.OK);
+        return Response.success("게시글 삭제 완료");
     }
 }
 
